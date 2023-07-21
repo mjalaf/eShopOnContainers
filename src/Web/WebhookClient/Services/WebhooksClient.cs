@@ -2,23 +2,19 @@
 
 public class WebhooksClient : IWebhooksClient
 {
-
     private readonly IHttpClientFactory _httpClientFactory;
-    private readonly Settings _settings;
-    public WebhooksClient(IHttpClientFactory httpClientFactory, IOptions<Settings> settings)
+    private readonly WebhookClientOptions _options;
+    public WebhooksClient(IHttpClientFactory httpClientFactory, IOptions<WebhookClientOptions> options)
     {
         _httpClientFactory = httpClientFactory;
-        _settings = settings.Value;
+        _options = options.Value;
     }
     public async Task<IEnumerable<WebhookResponse>> LoadWebhooks()
     {
         var client = _httpClientFactory.CreateClient("GrantClient");
-        var response = await client.GetAsync(_settings.WebhooksUrl + "/api/v1/webhooks");
+        var response = await client.GetAsync(_options.WebhooksUrl + "/api/v1/webhooks");
         var json = await response.Content.ReadAsStringAsync();
-        var subscriptions = JsonSerializer.Deserialize<IEnumerable<WebhookResponse>>(json, new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        });
+        var subscriptions = JsonSerializer.Deserialize<IEnumerable<WebhookResponse>>(json, JsonDefaults.CaseInsensitiveOptions);
         return subscriptions;
     }
 }

@@ -23,10 +23,7 @@ public class OrderingService : IOrderingService
 
         var responseString = await _httpClient.GetStringAsync(uri);
 
-        var response = JsonSerializer.Deserialize<Order>(responseString, new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        });
+        var response = JsonSerializer.Deserialize<Order>(responseString, JsonDefaults.CaseInsensitiveOptions);
 
         return response;
     }
@@ -37,10 +34,7 @@ public class OrderingService : IOrderingService
 
         var responseString = await _httpClient.GetStringAsync(uri);
 
-        var response = JsonSerializer.Deserialize<List<Order>>(responseString, new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        });
+        var response = JsonSerializer.Deserialize<List<Order>>(responseString, JsonDefaults.CaseInsensitiveOptions);
 
         return response;
     }
@@ -55,7 +49,7 @@ public class OrderingService : IOrderingService
         };
 
         var uri = API.Order.CancelOrder(_remoteServiceBaseUrl);
-        var orderContent = new StringContent(JsonSerializer.Serialize(order), System.Text.Encoding.UTF8, "application/json");
+        var orderContent = new StringContent(JsonSerializer.Serialize(order), Encoding.UTF8, "application/json");
 
         var response = await _httpClient.PutAsync(uri, orderContent);
 
@@ -75,7 +69,7 @@ public class OrderingService : IOrderingService
         };
 
         var uri = API.Order.ShipOrder(_remoteServiceBaseUrl);
-        var orderContent = new StringContent(JsonSerializer.Serialize(order), System.Text.Encoding.UTF8, "application/json");
+        var orderContent = new StringContent(JsonSerializer.Serialize(order), Encoding.UTF8, "application/json");
 
         var response = await _httpClient.PutAsync(uri, orderContent);
 
