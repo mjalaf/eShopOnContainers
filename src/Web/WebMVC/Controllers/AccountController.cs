@@ -11,9 +11,17 @@ public class AccountController : Controller
     }
 
     [Authorize(AuthenticationSchemes = OpenIdConnectDefaults.AuthenticationScheme)]
-    public IActionResult SignIn(string returnUrl)
+    public async Task<IActionResult> SignIn(string returnUrl)
     {
-        _logger.LogInformation("User {@User} authenticated", User.Identity.Name);
+        var user = User as ClaimsPrincipal;
+        var token = await HttpContext.GetTokenAsync("access_token");
+
+        _logger.LogInformation("----- User {@User} authenticated into {AppName}", user, Program.AppName);
+
+        if (token != null)
+        {
+            ViewData["access_token"] = token;
+        }
 
         // "Catalog" because UrlHelper doesn't support nameof() for controllers
         // https://github.com/aspnet/Mvc/issues/5853
